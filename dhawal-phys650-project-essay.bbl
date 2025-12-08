@@ -1,0 +1,41 @@
+\begin{thebibliography}{1}
+
+\bibitem{trapped-ion-hyperfine-qubit}
+C.~J. Ballance, T.~P. Harty, N.~M. Linke, M.~A. Sepiol, and D.~M. Lucas.
+\newblock High-fidelity quantum logic gates using trapped-ion hyperfine qubits.
+\newblock {\em Phys. Rev. Lett.}, 117:060504, Aug 2016.
+
+\bibitem{Chao_2018}
+Rui Chao and Ben~W. Reichardt.
+\newblock Quantum error correction with only two extra qubits.
+\newblock {\em Physical Review Letters}, 121(5), August 2018.
+
+\bibitem{quantum-advantage-threshold}
+A.~K. Fedorov, N.~Gisin, S.~M. Beloussov, and A.~I. Lvovsky.
+\newblock Quantum computing at the quantum advantage threshold: a
+  down-to-business review.
+\newblock Jan 2022.
+
+\bibitem{roffe}
+Joschka Roffe.
+\newblock Quantum error correction: an introductory guide.
+\newblock {\em Contemporary Physics}, 60(3):226–245, July 2019.
+
+\bibitem{shor-error-correction}
+Peter~W. Shor.
+\newblock Scheme for reducing decoherence in quantum computer memory.
+\newblock {\em Phys. Rev. A}, 52:R2493--R2496, Oct 1995.
+
+\bibitem{photon-qubit}
+Xi-Lin Wang, Luo-Kan Chen, W.~Li, H.-L. Huang, C.~Liu, C.~Chen, Y.-H. Luo,
+  Z.-E. Su, D.~Wu, Z.-D. Li, H.~Lu, Y.~Hu, X.~Jiang, C.-Z. Peng, L.~Li, N.-L.
+  Liu, Yu-Ao Chen, Chao-Yang Lu, and Jian-Wei Pan.
+\newblock Experimental ten-photon entanglement.
+\newblock {\em Phys. Rev. Lett.}, 117:210502, Nov 2016.
+
+\bibitem{no-cloning}
+William~K Wootters and Wojciech~H Zurek.
+\newblock A single quantum cannot be cloned.
+\newblock {\em Nature}, 299(5886):802--803, 1982.
+
+\end{thebibliography}

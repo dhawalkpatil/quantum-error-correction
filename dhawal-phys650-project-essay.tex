@@ -1,0 +1,474 @@
+\documentclass{article}
+\usepackage{amssymb,amsthm,amsmath,quantikz}
+\usepackage{stmaryrd}
+
+\begin{document}
+\begin{abstract}
+This is an essay submitted for step 2 of the project for
+course PHYS/CISC650 - Introduction to 
+Quantum Computing and Quantum Information Theory taught 
+by Prof Alexei Kananenka at University of Delaware in Fall 2025.
+I have explained a few quantum error correction algorithms in this paper. The 
+content is sourced mainly from \cite{roffe}. Figures are as attributed
+but were texified manually by me.
+\end{abstract}
+
+
+The current trends in quantum computing make use of photons \cite{photon-qubit}, 
+trapped ions \cite{trapped-ion-hyperfine-qubit},
+superconducting qubits and spins in semiconductors to act as 
+qubits. A common shortcoming of all these technologies is scalability and
+fidelity. 
+\emph{Scalability} - Current quantum computing devices operate with on
+the order of a hundred qubits with approximately 20–30
+gate operations and are not capable of error correction \cite{quantum-advantage%
+-threshold}.
+\emph{Fidelity} - It is not possible to isolate these qubits from the environment easily.
+This results in several errors acting on the qubits such as $X,$ $Y$ and $Z$
+errors. The $X$ error is a bit flip error which also occurs in classical
+information processing systems. Quantum information processors are
+different in that they also suffer from phase errors like $Y$ and $Z.$
+The third problem is that it is difficult to construct an information processor
+with several hundreds of too many qubits which interact with 
+each other coherently. The advantage of quantum computing is that
+information is stored not simply in the bits (qubits) but largely in
+the probability correlation representing the probability of each qubit
+occurring in a certain state. This makes quantum systems susceptible to
+decoherence. This means that if the entanglement breaks down, then the 
+information is lost. 
+
+To combat these issues, Peter~Shor proposed the first quantum error
+correction scheme in 1995 \cite{shor-error-correction}. This method
+demonstrated how quantum information can be redundantly stored
+and error be suppressed. In this paper, I will describe some
+modern quantum error correction codes such as the stabiliser
+code.
+
+\section{Example - The Three Qubit Error Correction Code}
+In this section I first describe the two qubit error detection code
+which utilises projective measurements on the syndrome qubit.
+Then I describe the three qubit error correction code.
+
+Classical error correction codes depend on the reliable duplication
+of the source information into multiple instances, and using more resources
+to represent the duplicated information. Quantum information suffers from
+lack of such reliability 
+and the impossibility of doing so described in \cite{no-cloning}, as the 
+no-cloning theorem raises
+challenges in error correction protocols. The smallest correction code
+which can correct all errors on a single qubit
+uses 5 qubits \cite{Chao_2018}.
+Any state $ \psi$
+can not be cloned into another qubit simultaneously.
+the operation
+$$ \psi \xrightarrow{\text{two-qubit encoder}} \psi \otimes \psi$$
+cannot be possibly done using any Unitary operator. Since all quantum gates
+are described by unitary transformations, this operation is not
+possible to be done with any quantum information processor at all.
+
+If such an operator $U$ existed, then
+$$A \ket{0} = \ket{00} \qquad \text{and} \qquad
+A \ket{1} = \ket{11}.$$
+So, 
+\begin{flalign*}
+	A ( \alpha \ket{0} + \beta \ket{1}) =
+	\alpha^2 \ket{00} + \alpha \beta (\ket{01} + \ket{10})
+	+ \beta^2 \ket{11} \\
+	\not 
+	= \alpha \ket{00} + \beta \ket{11}
+	= \alpha( A \ket{0}) + \beta (A \ket{1}).
+\end{flalign*}
+This shows that $A$ cannot even be a linear operator, let alone a 
+unitary. This theorem and proof are sourced from \cite{no-cloning}.
+Even though this proof is written as if for two states,
+it forbids cloning for arbitrary states in any system.
+
+The means to circumvent this error is to pass the state
+through a two qubit encoder 
+$$ \alpha \vert 0 \rangle  + \beta \vert 1 \rangle
+\xrightarrow {\text{two-qubit encoder}} \alpha \vert 00 \rangle
++ \beta \vert 11 \rangle
+= \alpha \vert 0 \rangle_{L} \beta \vert 1 \rangle_{L}.$$
+An error $X_1,$ respectively $X_2,$ which flips the first, respectively
+second bit, sends the state $ \psi$ into the subspace
+$\mathcal{F}$ spanned by $ \vert 01\rangle$ and $\vert 10 \rangle.$ Two 
+qubit encoding thus 
+renders both errors indistinguishable. It is thus capable of 
+detecting errors but not of correcting them.
+
+
+The code subspace $\mathcal{C}$ is the span of $ \vert 00 \rangle$
+and $\vert 11 \rangle.$ Since $\mathcal{C}$ and $\mathcal{F}$ are
+mutually orthogonal subspaces it is possible to make a projective
+measurement on one of the qubits without destroying any of the
+information.
+
+\section{The projective measurement $Z_1 Z_2.$}
+The $Z_1Z_2$ gate is described as follows
+$$
+Z_1 Z_2 = 
+\begin{bmatrix}
+	1 & 0 & 0 & 0 \\
+	0 & -1 & 0 & 0 \\
+	0 & 0 & -1 & 0 \\
+	0 & 0 & 0 & -1 
+\end{bmatrix}.
+.
+$$
+If an error occurs, then $ \psi \in \mathcal{F}$
+$$
+\vert 01 \rangle
+= \begin{bmatrix}
+	0 \\ 0 \\ 1 \\ 0
+\end{bmatrix}.
+$$
+
+Thus $ Z_1 Z_2 \vert 10 \rangle$ is given by
+
+$$
+\begin{bmatrix}
+	1 & 0 & 0 & 0 \\
+	0 & -1 & 0 & 0 \\
+	0 & 0 & -1 & 0 \\
+	0 & 0 & 0 & -1 
+\end{bmatrix}
+\begin{bmatrix}
+	0 \\ 0 \\ 1 \\ 0
+\end{bmatrix}
+= -
+\begin{bmatrix}
+	0 \\ 0 \\ 1 \\ 0
+\end{bmatrix}
+= - \psi.
+$$
+
+Similarly, if $$\psi = \ket {01 } = 
+\begin{bmatrix}
+	0  \\ 1 \\ 0 \\ 0 \\	
+\end{bmatrix},
+$$
+then
+$$
+Z_1 Z_2 \psi = 
+\begin{bmatrix}
+	1 & 0 & 0 & 0 \\
+	0 & -1 & 0 & 0 \\
+	0 & 0 & -1 & 0 \\
+	0 & 0 & 0 & -1 
+\end{bmatrix}
+\begin{bmatrix}
+	0  \\ 1 \\ 0 \\ 0 \\	
+\end{bmatrix}
+=
+\begin{bmatrix}
+	0  \\ -1 \\ 0 \\ 0 \\	
+\end{bmatrix}
+= - \psi.$$
+Thus errors are detected by presence of a state in the characteristic
+subspace corresponding to $-1.$
+The fact that there are only two characteristic spaces, of values 1 and -1, can
+be restated as follows. All the results of a single error on one qubit
+is anticommutative with one of the projective measurements.
+
+\section{Three Qubit error correction code}
+Akin to the two qubit code, this algorithm also utilises projective measurements
+which act on the main state and extract two qubits in the syndrome.
+Similar the the two qubit encoder, this algorithm prepares the state in the first
+qubit $ \psi = \alpha \vert 0 \rangle + \beta \vert 1 \rangle $ by duplicating it into the second and third qubits.
+The latter two are prepared in the state zero and encoded as:
+$$
+\operatorname{CNOT}_{1,2} \operatorname{CNOT}_{1,3} \psi \otimes \vert 0 \rangle \otimes \vert 0 \rangle
+= \alpha \vert 000 \rangle + \beta \vert 111 \rangle.$$
+Following the error, the state enters one of the four orthogonal subspaces
+$\mathcal{C} = \operatorname{span}\{ \vert 000 \rangle, \vert 111 \rangle \},$
+$\mathcal{F}_1 = \operatorname{span} \{ \vert 100 \rangle, \vert 011 \rangle \},$
+$\mathcal{F}_2 = \operatorname{span} \{ \vert 010 \rangle, \vert 101 \rangle \},$
+and $\mathcal{F}_3 = \operatorname{span} \{ \vert 001 \rangle, \vert 110 \rangle \}.$
+Following the duplication encoding, $ \psi$ enters $\mathcal{C}$ and stays in
+this subspace $\mathcal{C}.$ if no error occurs. In case $X_1,$ $X_2,$ respectively
+$X_3$ error occurs, it enters $\mathcal{C}_1,$ $\mathcal{C}_2,$ respectively
+$\mathcal{C}_3.$
+$$Z_1 Z_2 = \begin{bmatrix}
+	1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+	0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+	0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 \\
+	0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 \\
+	0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 \\
+	0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 \\
+	0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+	0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+\end{bmatrix}.$$
+As this matrix leaves 
+$$
+\begin{bmatrix}
+	1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 
+\end{bmatrix}
+$$
+unchanged, these are in the characteristic subspace of $Z_1 Z_2.$
+The $-1$ subspace of $Z_1Z_2$ is spanned by
+$$
+\begin{bmatrix}
+	0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 \\ 0 
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0 
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 
+\end{bmatrix}.$$
+Thus the operation $C_{Z_1Z_2}$ sends the first syndrome qubit $A_1$
+from state $ \vert + \rangle$ to $ \vert - \rangle$ if the first two qubits are
+in the $-1$ characteristic space and leaves it unchanged if it is in the $+1$ 
+characteristic state.
+
+So $ H A_1$ measures $1$ if $ \psi$ is in $\mathcal{F}_1$ or in $\mathcal{F}_2,$
+the ones where first two qubits are different. Similarly, $HA_2$ measures $1$
+if the second two qubits are different. If both happen, then the state is in $\mathcal{F}_2.$
+The other cases are 
+$$
+\begin{array}{ll}
+	space & A_1 A_2 \\
+	\mathcal{C} & 00 \\
+	\mathcal{F}_1 & 10 \\
+	\mathcal{F}_2 & 11 \\
+	\mathcal{F}_3 & 01 \\
+\end{array}.
+$$
+The three qubit correction code only protects against single bit flips.
+It does not protect against multiple bit flips or $Z$ errors.
+
+\section{Stabiliser Codes}
+The three qubit code is an example of a stabiliser code. In general,
+an $k$ qubit code can be entangled with $m=n-k$ redundancy qubits and 
+stabiliser measurements can be performed on the first $k$ qubits.
+Then the result of each of the projective measurements $P_i$ can be recorded
+in the $A_i$ syndrome qubit. The group $\mathcal{G}_n$ of Pauli operators
+of weight upto $n$ consists of elements such as $I \otimes X \otimes Z \otimes
+X.$ This operator is an element of $\mathcal{G}_4$ and has weight 3 because 
+it has 3 non identity measurements. An element of $\mathcal{G}_n$
+is called a stabiliser if it leaves the codespace unchanged.
+The stabilisers $\{ P_i \}$ are selected such that
+they are all elements of the Pauli group $\mathcal{G}_n$ and leave the
+codespace unchanged. Moreover, it is essential that the stabilisers all 
+commute with each other. This ensures that the measurements
+can be performed in any order or even simultaneously.
+	$(n,k,d)$ notation
+\begin{enumerate}
+	\item $n$ is the number of bits per codeword.
+	\item $k$ is the number of encoded bits.
+	\item $d$ is the code distance
+\end{enumerate}
+Here $d$ is the number minimum size of an error which goes undetected.
+
+\section{The $ \llbracket 4,2,2 \rrbracket $ detection code}
+The $ \llbracket 4,2,2 \rrbracket $ detection code is the smallest error correction code 
+which can detect $X$ type as well as $Z$ type errors. However, it cannot correct
+these errors though.
+
+
+\begin{figure}
+\begin{center}
+\begin{quantikz}
+	\lstick{ $ \vert \psi \rangle_1 $ } & \ctrl{2} & &
+					    & & \targ{} & 
+	\midstick[4,brackets=none] { $ \vert \psi_1 \psi_2 \rangle_L $ } 
+					    & \gate[4]{E} &  & 
+	\gate[4]{Z} & \gate[4]{{ X }} & &  & \\
+	\lstick{ $ \vert \psi \rangle_2 $ } & & \ctrl{1} & & \targ{} & & 
+					    & & & & & & & \\
+	\lstick{ $ \vert 0 \rangle_3 $ } & \targ{} & \targ{} & \targ{} 
+					 & & & & & & & & & & \\
+	\lstick{ $ \vert 0 \rangle_4 $ } & \gate{H} & & \ctrl{-1} & \ctrl{-2} &
+	\ctrl{-3} & & 
+		  &  & & & & & \\
+	\setwiretype{n} & & & & & & 
+	& \lstick{ $ \vert 0 \rangle _{A_1 } $  } 
+	& \gate{H} \setwiretype{q}  
+	& \ctrl{-4} & & \gate{H} & \meter{} \\
+	\setwiretype{n} & & & & & & 
+	& \lstick{ $ \vert 0 \rangle _{A_2 } $  } 
+	& \gate{H} \setwiretype{q}  
+	& & \ctrl{-4} & \gate{H} & \meter{} \\
+\end{quantikz}
+\caption{Circuit for the $\llbracket 4,2,2 \rrbracket$ algorithm. %
+source: \cite[figure 5]{roffe}}
+\end{center}
+\end{figure}
+
+The encoder sends $ \vert 00 \rangle$ to 
+$ \frac{1}{\sqrt{2}} ( \vert 0 0 0 0 \rangle + \vert 1  11 1 \rangle) ,$
+$\vert 01 \rangle$ to
+\begin{align*}
+	{}& \operatorname{CNOT}_{4,1} \operatorname{CNOT}_{4,2} \operatorname{CNOT} _{4,3} \vert 0 1 1 + \rangle \\
+	={}& \operatorname{CNOT}_{4,1} \operatorname{CNOT}_{4,2} \frac{1}{\sqrt{2}} ( \vert 0 1 1 0 \rangle + 
+	\vert 0 1 0 1 \rangle ) \\
+	={}& \operatorname{CNOT}_{4,1} \frac{1}{\sqrt{2}} 
+	( \vert 0 1 1 0 \rangle + \vert 0 0 0 1 \rangle ) \\
+	={}& \frac{1}{\sqrt{2}} ( \vert 0 1 1 0 \rangle + \vert 1 0 0 1 \rangle ) \\
+\end{align*}
+Essentially, the first syndrome qubit stores the parity of the data qubits and the 
+second one entangles the first three with their flips.
+So the codespace of this algorithm is
+$$ \mathcal{C} = \operatorname{span}
+\begin{Bmatrix}
+ \vert 0 0 \rangle_{L} = \frac{1}{\sqrt{2}} ( \vert 0 0 0 0 \rangle
+ + \vert 1 1 1 1 \rangle ) \\
+ \vert 0 1 \rangle_{L} = \frac{1}{\sqrt{2}} ( \vert 0 1 1 0 \rangle
+ + \vert 0 1 1 0 \rangle ) \\
+ \vert 1 0 \rangle_{L} = \frac{1}{\sqrt{2}} ( \vert 1 0 1 0 \rangle
+ + \vert 0 1 0 1 \rangle ) \\
+ \vert 1 1 \rangle_{L} = \frac{1}{\sqrt{2}} ( \vert 1 1 0 0 \rangle
+ + \vert 1 1 0 1 \rangle ) \\
+\end{Bmatrix}
+.$$
+This space is stabilised by $X_1 X_2 X_3 X_4$ and $Z_1 Z_2 Z_3 Z_4.$
+Also, the result of an $X$ flip is to make the first syndrome qubit 1, of a
+$Z$ error is to make the second syndrome qubit 1. Thus the extraction 
+of a syndrome allows detection of some error but does not tell us which error
+occurred. This is also consistent with the equation
+$$d = 2t + 1,$$
+as the highest weight of logical operator in this algorithm is 2,
+$d = 2.$ So $t=0$, that means it can not correct errors.
+
+The algorithm which can correct all errors one one logical qubit
+is the $\llbracket 5,1,3 \rrbracket$ algorithm.
+Some errors can propagate to correlated errors of higher weight
+on the data. 
+This algorithm works by recording such errors on a flag which is
+switched from $\ket{+}$ to $\ket{-}$ if such a propagative error
+has occured.
+
+\section{The Shor $\llbracket 9,1,3 \rrbracket$ Code}
+The code works on one logical qubit and encodes it into 9 qubits.
+This is done by concatenating the codeword with itself three times.
+So the codeword $ \ket {-}_{3p} = \frac{1}{2} (\ket{000} + \ket{111})$ is 
+transformed to $$\ket{-}_{3p} \ket{-}_{3p} \ket{-}_{3p}
+ = \frac{1}{\sqrt{8}} (( \ket{000} - \ket{111}) ( \ket{000} - \ket{111}) 
+( \ket{000} - \ket{111}) ).$$
+The code $\ket{+}_{3p}$ is transformed similarly, and
+the codespace is
+$$ \mathcal{C}_{ \llbracket 9, 1, 3 \rrbracket }
+ = \operatorname{span}
+ \left\{ 
+	 \begin{array}{l}
+	 \ket{0}_{9} = \frac{1}{\sqrt{8}}  
+	 \left( ( \ket{000} + \ket{111}) ( \ket{000} + \ket{111})  
+	 (\ket{000} + \ket{111} ) \right)  \\
+	 \ket{1}_{9} = \frac{1}{\sqrt{8}}  
+	 \left( ( \ket{000} - \ket{111}) ( \ket{000} - \ket{111}) 
+	( \ket{000} - \ket{111}) \right)  
+ \end{array}
+ \right\} .$$
+ The stabilisers of this space are
+ $$\mathcal{S}_{ \llbracket 9,1,3 \rrbracket}
+ =  
+ \begin{array}{l}
+ \langle Z_1 Z_2, Z_2 Z_3, Z_4Z_5, Z_5 Z_6, Z_7 Z_8, Z_8Z_9,\\
+ X_1 X_2 X_3 X_4 X_5 X_6 , X_4 X_5 X_6 X_7 X_8 X_9 \rangle.
+ \end{array}$$
+ Note that these are simply stabilisers of the individual components
+ which are being concatenated together.
+
+
+If the $X_5$ occurs, then $Z_4Z_5$ and $Z_5Z_6$ send the state
+$ \psi = (\ket{000} - \ket{111}(\ket{000} - \ket{111}))(\ket{000} 0 \ket{111})$
+(for example)
+to the $-1$ characteristic space. All the other stabilisers
+send it to the $+1$ subspace. So the syndrome extracted is
+$001100000.$ This is because 
+\begin{align*}
+X_5 \ket{0}_{3p}
+={}& X_5 \left( 
+\frac{1}{\sqrt{8}}  
+	 \left( ( \ket{000} + \ket{111}) ( \ket{000} + \ket{111})  
+	 (\ket{000} + \ket{111} ) \right)  
+ \right) \\
+	={}&\left( 
+\frac{1}{\sqrt{8}}  
+	 \left( ( \ket{000} + \ket{111}) ( \ket{010} + \ket{101})  
+	 (\ket{000} + \ket{111} ) \right)  
+\right) .
+\end{align*}
+
+The $Z_4Z_5$ operator acts on this state to make it
+$$
+\frac{1}{\sqrt{8}} \left( 
+	(\ket{000} + \ket{111}) (-\ket{010} - \ket{101})
+	(\ket{000} + \ket{111})
+\right) .$$
+upon entanglement with a syndrome qubit corresponding to $Z_4Z_5,$
+$ \psi \otimes \ket{+}_{4} = \frac{1}{\sqrt{2}} (\psi \otimes \ket{0} + 
+\psi \otimes \ket{1}) $ transforms to
+$Z_4 Z_5 \psi \otimes \ket{+}_4
+= \frac{1}{\sqrt{2}} (\psi \otimes \ket{0}
+- \psi \otimes \ket{1})
+= \psi \otimes \ket{-}_4.$ The syndrome $\ket{+}_4$ is passed through the
+Hadamard gate and extracted as a 0. Note that the key here is
+that $Z_4Z_5$ acts on it only if the syndrome qubit is in state 1.
+In this way the other syndrome bits can be extracted for all the states in the 
+codespace.
+If the syndrome reads $001100000$ then the error recovery is done
+by applying $Z_4Z_5$ and $Z_5Z_6$ on the state.
+In this way it can correct alll single qubit errors
+having distance $d=3.$
+
+\section{Scalability}
+Some of the challenges with Stabiliser codes are finding 
+the sets of stabilisers, and finding codes which work well with
+the chosen stabilisers.
+Hamming Codes,
+which are $\llbracket 2^r - 1, 2^r -1-2r, 3 \rrbracket$ algorithms
+of the Stabliiser algorithms, can be scaled. g
+Another modern class of scalable quantum error correction algorithms is
+the Surface code algorithms. The Surface code algorithms belong to a class
+of codes called the topological codes. Surface codes mitigate the problem
+of finding stabilisers
+problem by patching together smaller repeated
+elements of smaller codes. Hence they can be scaled to larger codes
+easily. Moreover, these only require interaction of qubits with near neighbours.
+This is helpful because high fidelity interactions over long ranges are not easily
+possible between qubits in most quantum computing platforms. This makes surface 
+codes the current standard in quantum error correction. 
+However, there are challenges to surface codes. It has a poor
+encoding density. While the distance of the code can be increased, the cost
+of doing so is a vanishing code rate. It is also highly resource intensive.
+
+
+\section{Current and future trends}
+The future of quantum computing requires processors which can satisfy
+the following four requirements. 
+The architecture should have a high noise threshold. It should enable implementation
+of universal sets of logic gates. The processing 
+should be possible with few physical qubits per logical qubits. 
+The need for more qubits arises from the role of redundancy in error 
+correction. The times required to execute the error correction should also
+be low so as to be compatible with the main computation itself. 
+These constraints are physical. 
+Low density parity check codes are one such class of error correction codes
+which satsify certain upper bounds on the number of qubits involved in 
+each parity check and the number of parity checks as well. 
+These factors bring a great deal of attention to these algorithms in the 
+field of quantum error correction.
+	
+ 
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{myref.bib}
+
+\end{document}
+
