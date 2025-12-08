@@ -34,15 +34,10 @@ Challenges:
 % -----------------------------
 \begin{frame}{Why Error Correction?}
 Quantum states cannot be freely copied (No-Cloning Theorem).
-\begin{multline*}
-	A(\alpha|0\rangle + \beta|1\rangle) 
-	= (\alpha \ket{0} + \beta \ket{1}) 
-	(\alpha \ket{0} + \beta \ket{1})  \\
-	= \alpha^2 \ket{00} + \alpha \beta \ket{01}
-	 + \alpha \beta \ket{10} + \beta^2 \ket{11}
-	 \not = \alpha \ket{00} + \beta \ket{11}
-	= \alpha A|0\rangle + \beta A|1\rangle
-\end{multline*}
+\[
+A(\alpha|0\rangle + \beta|1\rangle) 
+\neq \alpha A|0\rangle + \beta A|1\rangle
+\]
 
 Implications:
 \begin{itemize}
@@ -69,7 +64,7 @@ Z_1 Z_2 =
 1 & 0 & 0 & 0\\
 0 & -1 & 0 & 0\\
 0 & 0 & -1 & 0\\
-0 & 0 & 0 & 1
+0 & 0 & 0 & -1
 \end{bmatrix}
 \]
 
@@ -145,35 +140,6 @@ Smallest stabilizer code detecting both $X$ and $Z$ errors.
 
 Syndrome bits detect error type but cannot correct them because $d=2$.
 \end{frame}
-
-\begin{frame}
-	{Codespace}
-\begin{columns}
-	\begin{column}{0.5\textwidth}
-\begin{figure}
-\centering
-\begin{quantikz}
-	\lstick{$|\psi\rangle_1$} & \ctrl{2} & & & & \targ{} &\\
-	\lstick{$|\psi\rangle_2$} & & \ctrl{1} & & \targ{} & \\
-	\lstick{$|0\rangle_3$} & \targ{} & \targ{} & \targ{} & & \\
-	\lstick{$|0\rangle_4$} & \gate{H} & & \ctrl{-1} & \ctrl{-2} & \ctrl{-3} \\
-\end{quantikz}
-\end{figure}
-	\end{column}
-	\begin{column}{0.5\textwidth}
-	\begin{enumerate}
-	\item Given $ \psi = \ket{00},$ we compute $ \psi_L.$
-	\item First anciliary bit is the parity check. So $a_1 = \ket{0}.$
-		$a_2 = \frac{1}{\sqrt{2}} (\ket{0} + \ket{1}).$ 
-	\item 	Entangle $\ket{000}$ with $a_2$ 
-	to get $ \frac{1}{2} (\ket{000}(\ket{0} + \ket{1}).$
-	\item Finally, whenever $a_2$ is $\ket{1},$ flip the first three qubits.
-		$\psi_L = \frac{1}{2} (\ket{0000} + \ket{1111}).$
-	\end{enumerate}
-	\end{column}
-\end{columns}
-\end{frame}
-
 
 % -----------------------------
 \begin{frame}{Shor Code: $\llbracket 9,1,3 \rrbracket$}
