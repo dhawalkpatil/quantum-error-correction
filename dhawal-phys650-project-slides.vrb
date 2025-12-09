@@ -1,0 +1,38 @@
+\frametitle{Two Qubit Detection Code}
+\begin{enumerate}
+	\item All errors are unitary, so can be reversed by applying $E ^\dagger.$
+\item The circuit
+	\item $d = 2$ Indeed, replacing the first and third bits on $\ket{0110}$ yields $\ket{1100}.$
+		So, $t = \lfloor \frac{d}{2} \rfloor = 0$ errors can be corrected.
+		\item \textbf{Detection only}
+\end{enumerate}	
+\begin{figure}[h]
+\begin{tikzpicture}
+	\node[scale = 0.6]{
+	\begin{quantikz}
+	\lstick{ $ \ket{ \psi}_1 $ } & \ctrl{2} & & & & \targ{}
+	     & \midstick[4] { $ \ket{ \psi_1 \psi_2} _L $ }
+	     & \gate[4] {E}
+	     &
+	     \gate[4] { Z }
+	     &
+	     \gate[4] {
+		     X
+	     }
+	     & & \\
+	\lstick{ $ \ket{ \psi}_2 $ } & & \ctrl{1} & & \targ{} &
+	     & &
+	     & & & & \\
+	\lstick{ $ \ket{0}_3 $ } & \targ{} & \targ{} & \targ {} & &
+		 & & & & & & \\
+	\lstick{ $ \ket{0}_4 $ } & \gate{H} & & \ctrl{-1} & \ctrl{-2} & \ctrl{-3}
+				 & & & & & & \\
+	\setwiretype{n} & & & & & &
+	\midstick{$ \ket{0}_{A_1} $} & \gate{H} \setwiretype{q} & \ctrl{-4} & & \gate{H} & \meter{} \\
+	\setwiretype{n} & & & & & &
+	\midstick{$ \ket{0}_{A_2} $} & \gate{H} \setwiretype{q} & & \ctrl{-4} & \gate{H} & \meter{} \\
+\end{quantikz}
+}
+\end{tikzpicture}
+\end{figure}
+

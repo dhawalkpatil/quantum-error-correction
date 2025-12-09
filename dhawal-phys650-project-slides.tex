@@ -1,275 +1,131 @@
-\documentclass[aspectratio=169]{beamer}
-\usetheme{AnnArbor} % Modern clean theme
-\usepackage{amsmath, amssymb, amsthm}
+\documentclass[10pt]{beamer}
+\usepackage{amsmath,amsthm,mathtools,amssymb}
 \usepackage{quantikz}
-\usepackage{stmaryrd}
-
-\title{Quantum Error Correction: Stabiliser Codes}
-
-\subtitle{PHYS/CISC 650 – Step 4 Presentation}
-\author{Dhawal}
-\date{Fall 2025}
 
 \begin{document}
 
-\maketitle
-
-% -----------------------------
-\begin{frame}{Motivation}
-Quantum computing platforms:
-\begin{itemize}
-    \item Photonic qubits \cite{photon-qubit}
-    \item Trapped ions \cite{trapped-ion-hyperfine-qubit}
-    \item Superconducting qubits, semiconductor spins
-\end{itemize}
-
-Challenges:
-\begin{itemize}
-    \item \textbf{Scalability:} only 100–200 qubits, shallow circuits \cite{quantum-advantage-threshold}
-    \item \textbf{Fidelity:} vulnerable to $X, Y, Z$ errors
-    \item \textbf{Decoherence:} information stored in correlations → fragile
-\end{itemize}
+\begin{frame}
+	\titlepage
 \end{frame}
 
-% -----------------------------
-\begin{frame}{Why Error Correction?}
-Quantum states cannot be freely copied (No-Cloning Theorem).
-\begin{multline*}
-	A(\alpha|0\rangle + \beta|1\rangle) 
-	= (\alpha \ket{0} + \beta \ket{1}) 
-	(\alpha \ket{0} + \beta \ket{1})  \\
-	= \alpha^2 \ket{00} + \alpha \beta \ket{01}
-	 + \alpha \beta \ket{10} + \beta^2 \ket{11}
-	 \not = \alpha \ket{00} + \beta \ket{11}
-	= \alpha A|0\rangle + \beta A|1\rangle
-\end{multline*}
-
-Implications:
-\begin{itemize}
-    \item Cannot use classical redundancy (bit duplication)
-    \item Need encoding into larger entangled states
-    \item Detect and correct errors without collapsing the state
-\end{itemize}
+\begin{frame} {No cloning theorem}
+	Quantum states can not be freely copied
+\begin{align*}
+	A( \alpha \ket{0} + \beta \ket{1} ) 
+	={}& ( \alpha \ket{0} + \beta \ket{1})( \alpha \ket{0} + \beta \ket{1})  \\
+	={}& \alpha^2 \ket{00} + \alpha \beta \ket{01} + \alpha \beta \ket{10} + \beta^2 \ket{11} \\
+	\not ={}& \alpha \ket{00} + \beta \ket{11} \\
+	={}& \alpha A \ket{0} + \beta A \ket{1}
+\end{align*}
 \end{frame}
 
-% -----------------------------
-\begin{frame}{Two-Qubit Detection Code}
-Encoding:
-\[
-\alpha |0\rangle + \beta |1\rangle \rightarrow 
-\alpha |00\rangle + \beta |11\rangle
-\]
 
-Detects bit-flip ($X$) errors, but cannot distinguish where they occurred.
-
-Measurement:
-\[
-Z_1 Z_2 = 
-\begin{bmatrix}
-1 & 0 & 0 & 0\\
-0 & -1 & 0 & 0\\
-0 & 0 & -1 & 0\\
-0 & 0 & 0 & 1
-\end{bmatrix}
-\]
-
-Outcome:
-\begin{itemize}
-    \item $+1 \Rightarrow$ no error
-    \item $-1 \Rightarrow$ some error occurred
-\end{itemize}
-\end{frame}
-
-% -----------------------------
-\begin{frame}{Three-Qubit Bit-Flip Code}
-Encoding:
-\[
-| \psi \rangle \otimes |00\rangle \xrightarrow{\text{CNOT}} 
-\alpha|000\rangle + \beta|111\rangle
-\]
-
-Four orthogonal subspaces:
-\[
-\mathcal{C}, \mathcal{F}_1, \mathcal{F}_2, \mathcal{F}_3
-\]
-
-Syndromes:
-\[
-\begin{array}{c|c}
-\text{Subspace} & A_1 A_2\\
-\hline
-\mathcal{C} & 00\\
-\mathcal{F}_1 & 10\\
-\mathcal{F}_2 & 11\\
-\mathcal{F}_3 & 01
-\end{array}
-\]
-
-Corrects any single $X$ error.
-\end{frame}
-
-% -----------------------------
-\begin{frame}{Stabilizer Codes}
-Pauli group $\mathcal{G}_n$:
-\[
-\{ I, X, Y, Z \}^{\otimes n}
-\]
-
-Stabilizer code:
-\begin{itemize}
-    \item Codespace = $+1$ eigenspace of all stabilizers
-    \item Generators commute
-    \item $(n,k,d)$ notation
-\end{itemize}
-
-Distance $d$:
-\[
-d = \text{minimum weight of undetectable error}
-\]
-\end{frame}
-
-% -----------------------------
-\begin{frame}{$\llbracket 4,2,2 \rrbracket$ Detection Code}
-Smallest stabilizer code detecting both $X$ and $Z$ errors.
-
+\begin{frame}[allowframebreaks] {Two qubit detection algorithm}
+\begin{enumerate}
+\item $$ \psi = \alpha \ket{0} + \beta \ket{1} \xrightarrow{\text{two qubit encoder}}
+	\alpha \ket{00} + \beta \ket{11} .$$
+\item Code space = $ \mathcal{C} = span\{  \ket{00}, \ket{11} \}.$
+\item Error space $ \mathcal{F} = span \{ \ket{01}, \ket{10} \}.$
+\item For stabilisers $$ Z_1 Z_2 
+	= \begin{bmatrix}
+		1 & 0 & 0 & 0 \\
+		0 & -1 & 0 & 0 \\
+		0 & 0 & -1 & 0 \\
+		0 & 0 & 0 & -1
+	\end{bmatrix} ,$$
+	$Z_1 Z_2 \psi = - \psi$ if there is an error and $\psi$ if there is no error.
+\pagebreak
+\item  To extract this information, use a syndrome qubit
+	$s$
 \begin{figure}
-\centering
-\begin{quantikz}
-	\lstick{$|\psi\rangle_1$} & \ctrl{2} & & & & \targ{} & 
-	\midstick[4]{Encoded} & \gate[4]{E} & \gate[4]{Z} & \gate[4]{X} \\
-	\lstick{$|\psi\rangle_2$} & & \ctrl{1} & & \targ{} & & & & & \\
-	\lstick{$|0\rangle_3$} & \targ{} & \targ{} & \targ{} & & & & & & \\
-	\lstick{$|0\rangle_4$} & \gate{H} & & \ctrl{-1} & \ctrl{-2} & \ctrl{-3} & & & & \\
-\end{quantikz}
+	\begin{quantikz}
+		\psi & & \targ{} & \gate{E} & \\
+		\lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \gate{H} & \meter{} 
+	\end{quantikz}
 \end{figure}
-
-Syndrome bits detect error type but cannot correct them because $d=2$.
+\item If there was an error, then the transition would be
+	$$ \psi \ket{+} \to - \psi \ket{-} \to - \psi \ket{1} $$
+\item In a nutshell, states from $\mathcal{F}$ return a characteristic value of $-1$ and this can be 
+	read from the syndrome qubit.
+\item From $\ket{01}$ or $\ket{10},$ we can't go back to the original state. \textbf{Detection only}
+\end{enumerate}
 \end{frame}
 
 \begin{frame}
-	{Codespace}
-\begin{columns}
-	\begin{column}{0.5\textwidth}
-\begin{figure}
-\centering
-\begin{quantikz}
-	\lstick{$|\psi\rangle_1$} & \ctrl{2} & & & & \targ{} &\\
-	\lstick{$|\psi\rangle_2$} & & \ctrl{1} & & \targ{} & \\
-	\lstick{$|0\rangle_3$} & \targ{} & \targ{} & \targ{} & & \\
-	\lstick{$|0\rangle_4$} & \gate{H} & & \ctrl{-1} & \ctrl{-2} & \ctrl{-3} \\
+	{Stabiliser Codes}
+\begin{enumerate}
+	\item Split the space into $\mathcal{C}$ Codespace and error subspaces $\mathcal{F}_i$
+	one for each type of error.
+\item Stabiliser group $S$ is a subgroup of $\mathcal{G}_n.$
+\item $S$ stabilises $\mathcal{C},$ so it is in the subspace corresponding to $1$
+\item $\mathcal{F}_i$ is in characteristic subspace corresponding  $-1.$
+\end{enumerate}
+\end{frame}
+
+	
+\begin{frame} [fragile] {Two Qubit Detection Code}
+\begin{enumerate}
+	\item All errors are unitary, so can be reversed by applying $E ^\dagger.$
+\item The circuit
+	\item $d = 2$ Indeed, replacing the first and third bits on $\ket{0110}$ yields $\ket{1100}.$
+		So, $t = \lfloor \frac{d}{2} \rfloor = 0$ errors can be corrected.
+		\item \textbf{Detection only}
+\end{enumerate}	
+\begin{figure}[h]
+\begin{tikzpicture}
+	\node[scale = 0.6]{
+	\begin{quantikz}
+	\lstick{ $ \ket{ \psi}_1 $ } & \ctrl{2} & & & & \targ{} 
+	     & \midstick[4] { $ \ket{ \psi_1 \psi_2} _L $ }
+	     & \gate[4] {E} 
+	     &
+	     \gate[4] { Z }
+	     & 
+	     \gate[4] {
+		     X
+	     }
+	     & & \\
+	\lstick{ $ \ket{ \psi}_2 $ } & & \ctrl{1} & & \targ{} & 
+	     & & 
+	     & & & & \\
+	\lstick{ $ \ket{0}_3 $ } & \targ{} & \targ{} & \targ {} & & 
+		 & & & & & & \\
+	\lstick{ $ \ket{0}_4 $ } & \gate{H} & & \ctrl{-1} & \ctrl{-2} & \ctrl{-3} 
+				 & & & & & & \\
+	\setwiretype{n} & & & & & &
+	\midstick{$ \ket{0}_{A_1} $} & \gate{H} \setwiretype{q} & \ctrl{-4} & & \gate{H} & \meter{} \\
+	\setwiretype{n} & & & & & &
+	\midstick{$ \ket{0}_{A_2} $} & \gate{H} \setwiretype{q} & & \ctrl{-4} & \gate{H} & \meter{} \\
 \end{quantikz}
+}
+\end{tikzpicture}
 \end{figure}
-	\end{column}
-	\begin{column}{0.5\textwidth}
-	\begin{enumerate}
-	\item Given $ \psi = \ket{00},$ we compute $ \psi_L.$
-	\item First anciliary bit is the parity check. So $a_1 = \ket{0}.$
-		$a_2 = \frac{1}{\sqrt{2}} (\ket{0} + \ket{1}).$ 
-	\item 	Entangle $\ket{000}$ with $a_2$ 
-	to get $ \frac{1}{2} (\ket{000}(\ket{0} + \ket{1}).$
-	\item Finally, whenever $a_2$ is $\ket{1},$ flip the first three qubits.
-		$\psi_L = \frac{1}{2} (\ket{0000} + \ket{1111}).$
-	\end{enumerate}
-	\end{column}
-\end{columns}
-\end{frame}
-
-
-% -----------------------------
-\begin{frame}{Shor Code: $\llbracket 9,1,3 \rrbracket$}
-First quantum error-correcting code (1995).
-
-Encoding:
-\[
-|0\rangle_{9} = \frac{1}{\sqrt{8}} (|000\rangle + |111\rangle)^{\otimes 3}
-\]
-
-Stabilizers include:
-\[
-Z_1Z_2, Z_2Z_3, \dots,\;
-X_1 X_2 X_3 X_4 X_5 X_6, \dots
-\]
-
-Corrects \textbf{any} single-qubit error ($d=3$).
-\end{frame}
-
-% -----------------------------
-\begin{frame}{Syndrome Example (Shor Code)}
-If error $X_5$ occurs:
-
-\[
-Z_4Z_5, Z_5Z_6 \Rightarrow -1
-\]
-
-All other stabilizers return $+1$.
-
-Syndrome:
-\[
-001100000
-\]
-
-Recovery:
-\[
-Z_4Z_5,\, Z_5Z_6
-\]
-\end{frame}
-
-% -----------------------------
-\begin{frame}{Scalability Challenges}
-Stabilizer code issues:
-\begin{itemize}
-    \item Choosing stabilizers
-    \item Constructing codes with good distance
-\end{itemize}
-
-Hamming codes:
-\[
-\llbracket 2^r -1,\; 2^r -1 -2r,\; 3 \rrbracket
-\]
-
-Surface codes:
-\begin{itemize}
-    \item Topological, local interactions
-    \item Repeated small patches → scalable
-    \item High noise threshold
-    \item But: low encoding density, many physical qubits needed
-\end{itemize}
-\end{frame}
-
-% -----------------------------
-\begin{frame}{Other Correction Algorithms}
-Requirements for practical quantum processors:
-\begin{itemize}
-    \item High noise threshold
-    \item Universal logical gate set
-    \item Low qubit overhead per logical qubit
-    \item Fast error correction cycles
-\end{itemize}
-
-Low-Density Parity-Check (LDPC) codes:
-\begin{itemize}
-    \item Sparse parity checks
-    \item Lower resource overhead
-    \item Growing research interest
-\end{itemize}
 
 \end{frame}
 
-% -----------------------------
-\begin{frame}{Conclusion}
-\begin{itemize}
-    \item QEC is essential for scalable quantum computation
-    \item Early codes (3-qubit, Shor) illustrate basic principles
-    \item Stabilizer formalism unifies many codes
-    \item Surface codes dominate current hardware implementations
-    \item LDPC codes may significantly reduce qubit overhead in the future
-\end{itemize}
-
-\centering \textbf{Questions?}
+\begin{frame}
+\begin{enumerate}
+	\item For an $(n, k, d)$ code, $k$ logical qubits can be encoded into $n$ physical qubits.
+	\item Efficiency of encoding is $k/n.$
+	\item On propagation of $1$ error, a state can enter one of 
+\end{enumerate}
 \end{frame}
 
-% -----------------------------
-\bibliographystyle{plain}
-\bibliography{myref.bib}
+\begin{frame}
+	{Stabiliser Codes}
+\begin{enumerate}
+\item {The $[[ 5,1,3 ]]$ Code}
+	Capable of correcting all kinds of errors on one logical qubit.
+\item Stabiliser Codes [BAD] - difficult to find stabiliser subgroups
+\item Alternate - Surface code
+\item Stabiliser Codes [BAD] - higher dimension codes have denser parity checks,
+	more susceptible to decoherence
+\item Alternate - Low Density Parity Check Code
+\end{enumerate}
+\end{frame}
 
+\begin{frame}
+	Surface Codes
+\end{frame}
 \end{document}
+
