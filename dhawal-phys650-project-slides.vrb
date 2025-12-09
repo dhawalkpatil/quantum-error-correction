@@ -8,7 +8,7 @@
 \end{enumerate}	
 \begin{figure}[h]
 \begin{tikzpicture}
-	\node[scale = 0.6]{
+	\node[scale = 0.8]{
 	\begin{quantikz}
 	\lstick{ $ \ket{ \psi}_1 $ } & \ctrl{2} & & & & \targ{}
 	     & \midstick[4] { $ \ket{ \psi_1 \psi_2} _L $ }
@@ -32,7 +32,7 @@
 	\setwiretype{n} & & & & & &
 	\midstick{$ \ket{0}_{A_2} $} & \gate{H} \setwiretype{q} & & \ctrl{-4} & \gate{H} & \meter{} \\
 \end{quantikz}
-}
+};
 \end{tikzpicture}
 \end{figure}
 

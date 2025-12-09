@@ -2,6 +2,11 @@
 \usepackage{amsmath,amsthm,mathtools,amssymb}
 \usepackage{quantikz}
 
+\title[QEC]{Quantum Error Correction - Stabiliser Codes}
+\subtitle{PHYS650 Presentation}
+\author[DP]{Dhawal Patil}
+\date[12-09-25]{Dec 09 2025}
+
 \begin{document}
 
 \begin{frame}
@@ -31,7 +36,7 @@
 		1 & 0 & 0 & 0 \\
 		0 & -1 & 0 & 0 \\
 		0 & 0 & -1 & 0 \\
-		0 & 0 & 0 & -1
+		0 & 0 & 0 & 1
 	\end{bmatrix} ,$$
 	$Z_1 Z_2 \psi = - \psi$ if there is an error and $\psi$ if there is no error.
 \pagebreak
@@ -39,8 +44,10 @@
 	$s$
 \begin{figure}
 	\begin{quantikz}
-		\psi & & \targ{} & \gate{E} & \\
-		\lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \gate{H} & \meter{} 
+		\psi & \gate{E} &
+		\gate{{Z_1 Z_2}} & \\
+		\lstick{\ket{0}} & \gate{H} & \ctrl{-1}
+				 & \gate{H} & \meter{} 
 	\end{quantikz}
 \end{figure}
 \item If there was an error, then the transition would be
@@ -73,7 +80,7 @@
 \end{enumerate}	
 \begin{figure}[h]
 \begin{tikzpicture}
-	\node[scale = 0.6]{
+	\node[scale = 0.8]{
 	\begin{quantikz}
 	\lstick{ $ \ket{ \psi}_1 $ } & \ctrl{2} & & & & \targ{} 
 	     & \midstick[4] { $ \ket{ \psi_1 \psi_2} _L $ }
@@ -97,7 +104,7 @@
 	\setwiretype{n} & & & & & &
 	\midstick{$ \ket{0}_{A_2} $} & \gate{H} \setwiretype{q} & & \ctrl{-4} & \gate{H} & \meter{} \\
 \end{quantikz}
-}
+};
 \end{tikzpicture}
 \end{figure}
 
@@ -116,16 +123,64 @@
 \begin{enumerate}
 \item {The $[[ 5,1,3 ]]$ Code}
 	Capable of correcting all kinds of errors on one logical qubit.
-\item Stabiliser Codes [BAD] - difficult to find stabiliser subgroups
-\item Alternate - Surface code
 \item Stabiliser Codes [BAD] - higher dimension codes have denser parity checks,
 	more susceptible to decoherence
 \item Alternate - Low Density Parity Check Code
+\item Stabiliser Codes [BAD] - difficult to find stabiliser subgroups
+\item Alternate - Surface code
 \end{enumerate}
 \end{frame}
 
-\begin{frame}
-	Surface Codes
+\begin{frame}{Surface Codes}
+\begin{enumerate}
+    \item Surface codes belong to a class of topological stabiliser codes.
+    \item Qubits arranged on a 2-D lattice. Stabiliser checks are local.
+    \item Two types of checks:
+        \begin{itemize}
+            \item Star operators (measure $X$-type parity)
+            \item Plaquette operators (measure $Z$-type parity)
+        \end{itemize}
+    \item Errors create ``defects’’ which appear as flipped stabiliser values.
+    \item Decoding = finding a minimal path that connects these defects.
+    \item Pros:
+        \begin{itemize}
+            \item Very high threshold ($\sim 1\%$)
+            \item Only nearest-neighbour interactions needed
+        \end{itemize}
+    \item Cons:
+        \begin{itemize}
+            \item Very large number of physical qubits needed per logical qubit.
+        \end{itemize}
+\end{enumerate}
 \end{frame}
+
+
+\begin{frame}{Low Density Parity Check (LDPC) Codes}
+\begin{enumerate}
+    \item LDPC codes have stabilisers that touch only a small number of qubits.
+    \item Sparse parity check matrix $\Rightarrow$ fewer operations per check.
+    \item Pros:
+        \begin{itemize}
+            \item Much lower overhead than surface codes.
+            \item Potential for constant-rate quantum codes (good $k/n$).
+            \item Can achieve good distances without huge lattices.
+        \end{itemize}
+    \item Cons:
+        \begin{itemize}
+            \item Hard to find LDPC codes that also allow easy decoding.
+            \item Harder to implement on hardware due to non-local checks.
+        \end{itemize}
+    \item Active research area: quantum expander codes, hypergraph product codes.
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+	{References}
+	\bibliography{myref.bib}
+	\cite{roffe}
+\end{frame}
+
+
 \end{document}
 
